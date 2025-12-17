@@ -37,18 +37,27 @@ Perfect for developers seeking a powerful alternative to GitHub Copilot or Curso
 ## Quick Start
 
 ```bash
-# 1. Install globally
-npm install @codemieai/code
+# 1. Setup (interactive wizard)
+npx @codemieai/code setup
 
-# 2. Setup (interactive wizard)
-npx codemie setup
+# 2. Check system health
+npx @codemieai/code doctor
 
-# 3. Start coding with the built-in agent
+# 3. Install an external agent (e.g., Claude Code)
+npx @codemieai/code install claude
+
+# 4. Use the installed agent interactively
+npx codemie-claude
+
+# 5. Next Steps: Use the embedded agent
 npx codemie-code "Review my code for bugs"
 
-# 4. Install and use other agents
-npx codemie install claude
-npx codemie-claude "Refactor this function"
+# 6. Advanced Usage
+# Execute a single task directly via the main CLI
+npx @codemieai/code --task "Analyze this project structure"
+
+# Start the embedded agent in full interactive mode
+npx codemie-code
 ```
 
 ## Installation
