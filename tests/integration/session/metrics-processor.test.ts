@@ -9,7 +9,7 @@
  *
  * Test Scenario (from real session 4c2ddfdc-b619-4525-8d03-1950fb1b0257.jsonl):
  * - Same golden dataset as claude-metrics.test.ts
- * - Expected: 9 deltas (after deduplication of streaming chunks)
+ * - Expected: 9 deltas (7 main + 2 agent files, after deduplication of streaming chunks)
  * - Expected: Deltas aggregated by branch and marked as synced
  *
  * CRITICAL: Assertions MUST match original plugin behavior exactly (zero-tolerance)
@@ -146,7 +146,7 @@ describe('MetricsProcessor - Full Pipeline Integration Test', () => {
   describe('Initial State Validation', () => {
     it('should have written deltas from adapter', () => {
       expect(initialDeltas.length).toBeGreaterThan(0);
-      expect(initialDeltas.length).toBe(9); // Golden dataset: 9 deltas after deduplication
+      expect(initialDeltas.length).toBe(9); // 7 main + 2 agent files (after deduplication)
     });
 
     it('should have all deltas as pending initially', () => {
@@ -310,7 +310,7 @@ describe('MetricsProcessor - Full Pipeline Integration Test', () => {
         expect(writeOp?.format).toBeDefined();
         expect(writeOp?.language).toBeDefined();
       } else {
-        // If no write operations, at least verify that file operations structure is correct
+        // If no write operations after deduplication, verify file operations structure exists
         expect(deltasWithFileOps.length).toBeGreaterThanOrEqual(0);
       }
     });
