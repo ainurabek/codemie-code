@@ -176,6 +176,10 @@ export class MetricsProcessor implements SessionProcessor {
       }
     }
 
+    // Track processed API message IDs to deduplicate streaming chunks
+    // (Claude streams responses and creates multiple JSONL lines with different UUIDs but same message.id)
+    const processedApiMessageIds = new Set<string>();
+
     // Extract deltas from assistant messages
     for (const msg of messages) {
       if (!msg.uuid || processedIds.has(msg.uuid)) {
@@ -184,6 +188,19 @@ export class MetricsProcessor implements SessionProcessor {
 
       if (msg.message?.role !== 'assistant' || !msg.message?.usage) {
         continue;
+      }
+
+      // Skip duplicate streaming chunks (same API message.id)
+      const apiMessageId = msg.message.id;
+      if (apiMessageId && processedApiMessageIds.has(apiMessageId)) {
+        // Mark uuid as processed to avoid re-processing
+        processedIds.add(msg.uuid);
+        continue;
+      }
+
+      // Add API message ID to processed set
+      if (apiMessageId) {
+        processedApiMessageIds.add(apiMessageId);
       }
 
       let hasUnresolvedTools = false;

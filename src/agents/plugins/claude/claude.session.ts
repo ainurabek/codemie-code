@@ -200,9 +200,33 @@ export class ClaudeSessionAdapter implements SessionAdapter {
     }
 
     // Second pass: aggregate metrics
+    // Deduplicate by both uuid (file-level) and message.id (API-level)
+    // This ensures consistent metrics between session-level aggregation and delta creation
+    const processedMessageIds = new Set<string>();
+    const processedApiMessageIds = new Set<string>();
+
     for (const msg of messages) {
-      // Extract token usage
+      // Extract token usage - deduplicate by both identifiers
       if (msg.message?.usage) {
+        const messageId = msg.uuid;
+
+        // Skip if we already processed this message (file-level dedup)
+        if (processedMessageIds.has(messageId)) {
+          continue;
+        }
+        processedMessageIds.add(messageId);
+
+        // Skip duplicate streaming chunks (API-level dedup)
+        // Claude creates multiple JSONL lines with different UUIDs but same message.id
+        const apiMessageId = msg.message.id;
+        if (apiMessageId && processedApiMessageIds.has(apiMessageId)) {
+          continue;
+        }
+
+        if (apiMessageId) {
+          processedApiMessageIds.add(apiMessageId);
+        }
+
         const usage = msg.message.usage;
         inputTokens += usage.input_tokens || 0;
         outputTokens += usage.output_tokens || 0;
