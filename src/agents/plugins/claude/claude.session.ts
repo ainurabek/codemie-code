@@ -209,7 +209,7 @@ export class ClaudeSessionAdapter implements SessionAdapter {
       // Extract token usage
       if (msg.message?.usage) {
         // Deduplicate token counting by message.id (streaming chunks share same id)
-        // If no message.id, count each message independently (legacy/test format)
+        // If no message.id, count each message independently (valid format from certain Claude versions)
         let shouldCountTokens = true;
         if (msg.message.id) {
           if (processedMessageIds.has(msg.message.id)) {

@@ -192,7 +192,7 @@ export class MetricsProcessor implements SessionProcessor {
           }
           messageGroups.get(messageId)!.push(msg);
         } else if (msg.message?.usage) {
-          // No message.id but has usage: process independently (legacy/test format)
+          // No message.id but has usage: process independently (valid format from certain Claude versions)
           standaloneMessages.push(msg);
         }
       }
@@ -311,7 +311,7 @@ export class MetricsProcessor implements SessionProcessor {
       processDelta(groupedMessages, messageId);
     }
 
-    // Process standalone messages (no message.id, legacy/test format)
+    // Process standalone messages (no message.id - valid format from certain Claude versions)
     for (const msg of standaloneMessages) {
       processDelta([msg], msg.uuid);
     }

@@ -520,7 +520,7 @@ export class ConversationsProcessor implements SessionProcessor {
             // Overwrite to keep last occurrence (has final output_tokens)
             messageUsageMap.set(messageId, usageData);
           } else {
-            // No message.id: count independently (legacy/test format)
+            // No message.id: count independently (valid format from certain Claude versions)
             totalInputTokens += usageData.input;
             totalOutputTokens += usageData.output;
             totalCacheCreationTokens += usageData.cacheCreation;
